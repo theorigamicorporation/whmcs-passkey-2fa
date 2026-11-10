@@ -1,0 +1,24 @@
+{
+    "schema": "1.0",
+    "type": "whmcs-security",
+    "name": "webauthn",
+    "license": "MIT",
+    "category": "security",
+    "description": {
+        "name": "Passkey / Security Key",
+        "tagline": "Sign in with a fingerprint, face, device PIN or a hardware security key.",
+        "long": "Uses WebAuthn (FIDO2) as the second factor for clients and admins: Touch ID, Face ID, Windows Hello, Android, password-manager passkeys and hardware keys such as YubiKey.\n\nPhishing resistant, with nothing to type. Open source and verified entirely on your own server, with no third-party service."
+    },
+    "logo": {
+        "filename": "logo.png"
+    },
+    "support": {
+        "docs_url": "https://github.com/theorigamicorporation/whmcs-passkey-2fa"
+    },
+    "authors": [
+        {
+            "name": "The Origami Corporation",
+            "homepage": "https://github.com/theorigamicorporation/whmcs-passkey-2fa"
+        }
+    ]
+}

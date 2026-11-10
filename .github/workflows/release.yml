@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    name: Package and Release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint and test
+        run: |
+          set -e
+          find . -name '*.php' -print0 | while IFS= read -r -d '' f; do php -l "$f"; done
+          php tests/run.php
+
+      - name: Build artifacts
+        run: |
+          set -e
+          NAME=whmcs-passkey-2fa
+          STAGE="$(mktemp -d)/$NAME"
+          mkdir -p "$STAGE"
+          cp -a modules LICENSE README.md deploy "$STAGE/"
+          tar -C "$(dirname "$STAGE")" -czf "$NAME.tgz" "$NAME"
+          (cd "$(dirname "$STAGE")" && zip -qr "$OLDPWD/$NAME.zip" "$NAME")
+          sha256sum "$NAME.tgz" "$NAME.zip" > SHA256SUMS
+          cat SHA256SUMS
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            whmcs-passkey-2fa.tgz whmcs-passkey-2fa.zip SHA256SUMS
