@@ -49,7 +49,9 @@ await page.goto(BASE + '/?p=reset');
 const platform = await addAuthenticator({ transport: 'internal', hasResidentKey: true });
 
 await page.goto(BASE + '/?p=setup');
-await page.click('#btnSubmit');
+check('finish button is hidden until a passkey is added', !(await page.locator('[data-role=finish]').isVisible()));
+await page.evaluate(() => document.querySelector('form').requestSubmit());
+await page.waitForFunction(() => document.querySelector('#result').textContent !== '');
 check('setup without a passkey is refused', (await result()).startsWith('SETUP FAILED'), await result());
 
 await page.click('[data-role=action]');
@@ -68,7 +70,7 @@ await page.click('[data-role=action]');
 await page.waitForFunction(() => document.querySelectorAll('[data-role=list] li').length === 2);
 check('second passkey is listed', true);
 
-await page.click('#btnSubmit');
+await page.click('[data-role=finish]');
 check('setup stores two passkeys', (await result()) === 'SETUP OK 2', await result());
 const afterSetup = JSON.parse((await stored()).credentials);
 check('stored records carry key, algorithm and transports',
@@ -109,7 +111,7 @@ const restored = await addAuthenticator({ transport: 'usb', hasResidentKey: fals
 await page.goto(BASE + '/?p=setup');
 await page.click('[data-role=action]');
 await page.waitForSelector('[data-role=list] li');
-await page.click('#btnSubmit');
+await page.click('[data-role=finish]');
 check('re-enrolling replaces the stored passkeys', (await result()) === 'SETUP OK 1', await result());
 
 // The theme's own "Login" button must start the passkey prompt, not post an
@@ -131,7 +133,7 @@ const noUv = await addAuthenticator({ transport: 'usb', hasResidentKey: false, h
 await page.goto(BASE + '/?p=setup');
 await page.click('[data-role=action]');
 await page.waitForSelector('[data-role=list] li');
-await page.click('#btnSubmit');
+await page.click('[data-role=finish]');
 await page.goto(BASE + '/?p=login&uv=on');
 await page.click('[data-role=action]');
 await page.waitForTimeout(1200);

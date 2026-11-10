@@ -309,7 +309,14 @@ final class Module
             . '<p>' . self::esc($register ? $text['registerIntro'] : $text['loginIntro']) . '</p>'
             . '<ul data-role="list" class="list-unstyled" style="margin:0 0 12px"></ul>'
             . '<p><button type="button" class="btn btn-primary" data-role="action">'
-            . self::esc($register ? $text['add'] : $text['use']) . '</button></p>'
+            . self::esc($register ? $text['add'] : $text['use']) . '</button>'
+            // WHMCS hides the setup modal's own submit button for this step,
+            // so the module has to bring the one that completes it.
+            . ($register
+                ? ' <button type="button" class="btn btn-primary" data-role="finish" style="display:none">'
+                    . self::esc($text['finish']) . '</button>'
+                : '')
+            . '</p>'
             . '<div data-role="status" role="status" aria-live="polite" style="min-height:1.5em"></div>'
             . '<input type="hidden" name="' . self::FIELD . '" value="">'
             . '</div>'

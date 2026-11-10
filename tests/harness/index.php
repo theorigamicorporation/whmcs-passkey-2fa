@@ -56,7 +56,7 @@ if ($page === 'reset') {
     }
     $body = '<form method="post" id="frmSetup"><input type="hidden" name="2fasetup" value="1">'
         . webauthn_activate($params)
-        . '<button type="submit" id="btnSubmit" class="btn">Submit</button></form>';
+        . '</form>'; // like WHMCS, no submit button of its own for this step
 } elseif ($page === 'login') {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = webauthn_verify($params) ? 'LOGIN OK' : 'LOGIN FAILED';

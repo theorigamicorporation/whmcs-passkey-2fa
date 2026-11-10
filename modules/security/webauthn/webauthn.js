@@ -73,6 +73,22 @@ function webauthn2faInit(root) {
 
     if (cfg.mode === 'register') {
         var registered = [];
+        var finish = root.querySelector('[data-role=finish]');
+
+        // WHMCS shows this step in its AJAX modal and posts the modal's form
+        // with dialogSubmit(); outside a modal, post the form normally.
+        finish.addEventListener('click', function () {
+            if (!registered.length || !form) {
+                return;
+            }
+            finish.disabled = true;
+            button.disabled = true;
+            if (typeof window.dialogSubmit === 'function' && form.closest('#modalAjax')) {
+                window.dialogSubmit();
+            } else {
+                HTMLFormElement.prototype.submit.call(form);
+            }
+        });
 
         button.addEventListener('click', function () {
             button.disabled = true;
@@ -120,6 +136,8 @@ function webauthn2faInit(root) {
                 item.textContent = '✓ ' + t.item.replace('%d', String(registered.length));
                 listEl.appendChild(item);
                 button.textContent = t.addAnother;
+                button.className = 'btn btn-default';
+                finish.style.display = '';
                 setStatus(t.added, 'success');
             }).catch(function (error) {
                 setStatus(describe(error), 'danger');
